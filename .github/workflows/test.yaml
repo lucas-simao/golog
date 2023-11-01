@@ -1,0 +1,20 @@
+
+name: Go test
+
+on: [pull_request]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get dependencies
+        run: |
+          git config --global url."https://${{secrets.GO_MODULES_TOKEN}}:x-oauth-basic@github.com/Laboapp-team".insteadOf "https://github.com/Laboapp-team"
+          git submodule update --init --recursive --remote
+          go get -v -t -d ./...
+
+      - name: Test
+        run: go test -race -coverprofile coverage.out ./...
